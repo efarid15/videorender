@@ -12,8 +12,6 @@ import (
 	"time"
 )
 
-// Video contains information about a video file and all the operations that
-// need to be applied to it.
 type Video struct {
 	filepath       string
 	width          int
@@ -27,8 +25,6 @@ type Video struct {
 	additionalArgs []string
 }
 
-// Load gives you a Video that can be operated on. Load does not open the file
-// or load it into memory.
 func Load(path string) (*Video, error) {
 	if _, err := exec.LookPath("ffprobe"); err != nil {
 		return nil, errors.New("cinema.Load: ffprobe was not found in your PATH " +
@@ -131,17 +127,11 @@ func Load(path string) (*Video, error) {
 	}, nil
 }
 
-// Render applies all operations to the Video and creates an output video file
-// of the given name. This method won't return anything on stdout / stderr.
-// If you need to read ffmpeg's outputs, use RenderWithStreams
 
 func (v *Video) Render(output string) error {
 	return v.RenderWithStreams(output, nil, nil)
 }
 
-// RenderWithStreams applies all operations to the Video and creates an output video file
-// of the given name. By specifying an output stream and an error stream, you can read
-// ffmpeg's stdout and stderr.
 
 func (v *Video) RenderWithStreams(output string, os io.Writer, es io.Writer) error {
 	line := v.CommandLine(output)
@@ -156,8 +146,6 @@ func (v *Video) RenderWithStreams(output string, os io.Writer, es io.Writer) err
 	return nil
 }
 
-// CommandLine returns the command line that will be used to convert the Video
-// if you were to call Render.
 func (v *Video) CommandLine(output string) []string {
 	var filters string
 	if len(v.filters) > 0 {
@@ -186,9 +174,6 @@ func (v *Video) Mute() {
 	v.additionalArgs = append(v.additionalArgs, "-an")
 }
 
-// Trim sets the start and end time of the output video. It is always relative
-// to the original input video. start must be less than or equal to end or
-// nothing will change.
 func (v *Video) Trim(start, end time.Duration) {
 	if start <= end {
 		v.SetStart(start)
